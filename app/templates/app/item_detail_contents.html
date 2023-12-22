@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>1_文字列</p>
+        <p>メーカー</p>
     </div>
     <div class="col-7 col-sm-9">
         <p>{{  item.sample_1|default_if_none:"未入力"  }}</p>
@@ -8,15 +8,25 @@
 </div>
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>2_メモ</p>
+        <p>機種</p>
     </div>
     <div class="col-7 col-sm-9">
-        <p>{{  item.sample_2|default_if_none:"未入力" }}</p>
+        <p>
+            {% if item.sample_2.exists %}
+                {% for choice in item.sample_2.all %}
+                    {{ choice.name }}
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            {% else %}
+                未入力
+            {% endif %}
+        </p>
     </div>
 </div>
+
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>3_整数</p>
+        <p>症状ジャンル</p>
     </div>
     <div class="col-7 col-sm-9">
         <p>{{  item.sample_3|default_if_none:"未入力" }}</p>
@@ -24,15 +34,44 @@
 </div>
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>4_浮動小数点</p>
+        <p>症状詳細</p>
     </div>
     <div class="col-7 col-sm-9">
         <p>{{  item.sample_4|default_if_none:"未入力" }}</p>
     </div>
 </div>
+
+
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>5_固定小数点</p>
+        <p>症状画像</p>
+    </div>
+    {% if item.sample_4_2 %}
+    <div class="col-7 col-sm-9 text-right">
+        <div class="container float-right-image">
+            <img src="{{ item.sample_4_2.url }}" alt="{{ item.sample_4_2 }}" class="resizable-image">
+        </div>
+    </div>
+    {% endif %}
+</div>
+<style>
+    .image-container {
+        max-width: 100%;
+        height: auto;
+        text-align: center;
+        margin-bottom: 10px; /* 余白を追加する */
+    }
+    .resizable-image {
+        max-width: 40%; /* 画像の幅を指定 */
+        height: auto;
+    }
+</style>
+
+
+
+<div class="row">
+    <div class="col-5 col-sm-3">
+        <p>エラーコード</p>
     </div>
     <div class="col-7 col-sm-9">
         <p>{{  item.sample_5|default_if_none:"未入力" }}</p>
@@ -40,73 +79,106 @@
 </div>
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>6_ブール値</p>
+        <p>階層を上る</p>
     </div>
     <div class="col-7 col-sm-9">
-        <p>{{ item.sample_6|yesno:"はい,いいえ" }}</p>
+        <p>
+            {% if object.sample_6 %}
+                {% if object.sample_6|slice:"0:7" == "http://" or object.sample_6|slice:"0:8" == "https://" %}
+                    <a href="{{ object.sample_6 }}">Back</a>
+                {% elif object.sample_6 == "トップ" %}
+                    トップ
+                {% else %}
+                    URLが正しくありません。
+                {% endif %}
+            {% else %}
+                URLが入力されていません。
+            {% endif %}
+        </p>
     </div>
 </div>
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>7_日付</p>
+        <p>選択肢1</p>
     </div>
     <div class="col-7 col-sm-9">
-        <p>{{ item.sample_7|date:"Y年m月d日" }}</p>
+        {% if item.sample_7_1 %}
+            <p><a href="{{ item.sample_7_1 }}">{{ item.sample_7 }}</a></p>
+        {% else %}
+            <p>{{ item.sample_7|default:"未入力" }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-5 col-sm-3">
+        <p>選択肢2</p>
+    </div>
+    <div class="col-7 col-sm-9">
+        {% if item.sample_8_1 %}
+            <p><a href="{{ item.sample_8_1 }}">{{ item.sample_8 }}</a></p>
+        {% else %}
+            <p>{{ item.sample_8|default:"未入力" }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-5 col-sm-3">
+        <p>選択肢3</p>
+    </div>
+    <div class="col-7 col-sm-9">
+        {% if item.sample_9_1 %}
+            <p><a href="{{ item.sample_9_1 }}">{{ item.sample_9 }}</a></p>
+        {% else %}
+            <p>{{ item.sample_9|default:"未入力" }}</p>
+        {% endif %}
     </div>
 </div>
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>8_日時</p>
+        <p>添付ファイル</p>
     </div>
     <div class="col-7 col-sm-9">
-        <p>{{ item.sample_8|date:"Y年m月d日 G時i分s秒" }}</p>
+        {% if item.sample_4_1 %}
+            <p><a href="{{ item.sample_4_1.url }}" download>{{ item.sample_4_1.name }}</a></p>
+        {% else %}
+            <p>未入力</p>
+        {% endif %}
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-5 col-sm-3">
+        <hr>作成者
+    </div>
+    <div class="col-7 col-sm-9">
+        <hr>{{ item.created_by.get_full_name }}
     </div>
 </div>
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>9_選択肢（固定）</p>
+        作成時間
     </div>
     <div class="col-7 col-sm-9">
-        <p>{{ item.get_sample_9_display|default_if_none:"未入力" }}</p>
+        {{ item.created_at|date:"Y/m/d G:i:s" }}
     </div>
 </div>
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>10_選択肢（マスタ連動）</p>
+        更新者
     </div>
     <div class="col-7 col-sm-9">
-        <p>{{ item.sample_10.get_full_name|default_if_none:"未入力" }}</p>
+        {{ item.updated_by.get_full_name }}
     </div>
 </div>
 <div class="row">
     <div class="col-5 col-sm-3">
-        <p>作成者</p>
+        更新時間
     </div>
     <div class="col-7 col-sm-9">
-        <p>{{ item.created_by.get_full_name }}</p>
-    </div>
-</div>
-<div class="row">
-    <div class="col-5 col-sm-3">
-        <p>作成時間</p>
-    </div>
-    <div class="col-7 col-sm-9">
-        <p>{{ item.created_at|date:"Y/m/d G:i:s" }}</p>
-    </div>
-</div>
-<div class="row">
-    <div class="col-5 col-sm-3">
-        <p>更新者</p>
-    </div>
-    <div class="col-7 col-sm-9">
-        <p>{{ item.updated_by.get_full_name }}</p>
-    </div>
-</div>
-<div class="row">
-    <div class="col-5 col-sm-3">
-        <p>更新時間</p>
-    </div>
-    <div class="col-7 col-sm-9">
-        <p>{{ item.updated_at|date:"Y/m/d G:i:s" }}</p>
+        {{ item.updated_at|date:"Y/m/d G:i:s" }}
     </div>
 </div>
