@@ -1,6 +1,9 @@
 {% extends "./_base.html" %}
 {% block content %}
     {% load crispy_forms_tags %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
     <div class="container">
         <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
@@ -41,48 +44,102 @@
             <div class="col-12">
                 <ul class="list-group">
                     {% for item in item_list %}
+
                         <li class="list-group-item">
                             {# item_detail_contents.html を参考に必要な項目を追加してください #}
-                            <div class="row">
-                                <div class="col-5 col-sm-3">
-                                    <p>1_文字列</p>
-                                </div>
-                                <div class="col-7 col-sm-9">
-                                    <p>{{ item.sample_1|default_if_none:"未入力" }}</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-sm-3">
-                                    <p>2_メモ</p>
-                                </div>
-                                <div class="col-7 col-sm-9">
-                                    <p>{{ item.sample_2|default_if_none:"未入力" }}</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-sm-3">
-                                    <p>3_整数</p>
-                                </div>
-                                <div class="col-7 col-sm-9">
-                                    <p>{{ item.sample_3|default_if_none:"未入力" }}</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-sm-3">
-                                    <p>作成者</p>
-                                </div>
-                                <div class="col-7 col-sm-9">
-                                    <p>{{ item.created_by.get_full_name }}</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-sm-3">
-                                    <p>作成時間</p>
-                                </div>
-                                <div class="col-7 col-sm-9">
-                                    <p>{{ item.created_at|date:"Y/m/d G:i:s" }}</p>
-                                </div>
-                            </div>
+                            <div class="row"><!--こっから横並び-->
+                                <div class="col-8 col-sm-7"><!--こっから左-->
+                                    <div class="row">
+                                        <div class="col-5 col-sm-3">
+                                            <p>メーカー</p>
+                                        </div>
+                                        <div class="col-7 col-sm-9">
+                                            <p>{{ item.sample_1|default_if_none:"未入力" }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5 col-sm-3">
+                                            <p>機種</p>
+                                        </div>
+                                        <div class="col-7 col-sm-9">
+                                            <p>
+                                                {% if item.sample_2.exists %}
+                                                    {% for choice in item.sample_2.all %}
+                                                        {{ choice.name }}
+                                                        {% if not forloop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    未入力
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-5 col-sm-3">
+                                            <p>症状ジャンル</p>
+                                        </div>
+                                        <div class="col-7 col-sm-9">
+                                            <p>{{ item.sample_3|default_if_none:"未入力" }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5 col-sm-3">
+                                            <p>症状詳細</p>
+                                        </div>
+                                        <div class="col-7 col-sm-9">
+                                            <span>{{ item.sample_4|default_if_none:"未入力" }}</span>
+                                            {% if item.sample_6 == "トップ" %}
+                                                <span style="color: red;font-size: 8px;">★トップ</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5 col-sm-3">
+                                            <p>エラーコード</p>
+                                        </div>
+                                        <div class="col-7 col-sm-9">
+                                            <p>{{ item.sample_5|default_if_none:"未入力" }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5 col-sm-3">
+                                            <font size="2" color="grey"><p>タグ欄</p></font>
+                                        </div>
+                                        <div class="col-7 col-sm-9">
+                                            <font size="2" color="grey"><p>{{ item.sample_11|default_if_none:"未入力" }}</p></font>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div><!--ここまで左-->
+                                <div class="row">
+                                    {% if item.sample_4_2 %}
+                                    <div class="col-7 col-sm-9 text-right">
+                                        <div class="container float-right-image">
+                                            <img src="{{ item.sample_4_2.url }}" alt="{{ item.sample_4_2 }}" class="resizable-image">
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <style>
+                                        .image-container {
+                                            max-width: 100%;
+                                            height: auto;
+                                            text-align: center;
+                                            margin-bottom: 10px; /* 余白を追加する */
+                                        }
+                                        .resizable-image {
+                                            max-width: 30%; /* 画像の幅を指定 */
+                                            height: auto;
+                                        }
+                                        .float-right-image {
+                                            float: right; /* 画像を右に寄せる */
+                                            margin-top: -200px; /* 上に寄せる距離を調整 */
+                                        }
+                                    </style>
+                            </div><!--ここまで-->
+
+
+
                             <div class="row">
                                 <div class="col-12">
                                     <div class="float-right">
