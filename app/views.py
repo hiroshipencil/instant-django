@@ -1,3 +1,4 @@
+from re import A
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
@@ -9,6 +10,8 @@ from django_filters.views import FilterView
 from .filters import ItemFilterSet
 from .forms import ItemForm
 from .models import Item
+from django.shortcuts import render
+from .forms import SampleForm
 
 
 # 未ログインのユーザーにアクセスを許可する場合は、LoginRequiredMixinを継承から外してください。
@@ -91,6 +94,20 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
     form_class = ItemForm
     success_url = reverse_lazy('index')
 
+    def sample_form_view(request):
+        if request.method == 'POST':
+            form = SampleForm(request.POST)
+            if form.is_valid():
+            # フォームの処理を行う
+            # ...
+                return render(request, 'success.html')
+        # フォームが無効な場合の処理
+        # ...
+            return render(request, 'error.html')
+
+        form = SampleForm()
+        return render(request, 'sample_form.html', {'form': form})
+
     def form_valid(self, form):
         """
         登録処理
@@ -101,6 +118,8 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
         item.updated_by = self.request.user
         item.updated_at = timezone.now()
         item.save()
+
+        form.save_m2m()  # ManyToManyField のデータを保存
 
         return HttpResponseRedirect(self.success_url)
 
