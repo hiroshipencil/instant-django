@@ -1,6 +1,16 @@
 from django.db import models
-
 from users.models import User
+from django_filters import FilterSet, CharFilter
+from django.db.models import Q
+from django.conf import settings
+
+#↓機種多重選択
+class Sample2Choice(models.Model):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+#↑機種多重選択
 
 
 class Item(models.Model):
@@ -12,78 +22,140 @@ class Item(models.Model):
     https://docs.djangoproject.com/ja/2.1/ref/models/fields/
     """
 
-    # サンプル項目1 文字列
+    # 項目1 メーカー
+    sample_1_choice = (
+    ('GCC', 'GCC'),
+    ('SEI', 'SEI'),
+    ('ROC', 'ROC'),
+    ('WAZER', 'WAZER'),
+    ('BOFA', 'BOFA'),
+    ('ORION', 'ORION'),
+    ('アマノ', 'アマノ'),
+    )
+
     sample_1 = models.CharField(
-        verbose_name='サンプル項目1 文字列',
-        max_length=20,
+        verbose_name='メーカー',
+        choices=sample_1_choice,
+        max_length=20,  # 選択肢の最大長を指定します
+        blank=True,#空欄でも登録できるように
+        null=True,#空の状態を登録できるように
+    )
+
+    # 項目2 機種
+    sample_2 = models.ManyToManyField(
+        Sample2Choice,
+        verbose_name='機種',
+        blank=True,
+    )
+    #sample_2 = models.ManyToManyField(
+    #    Sample2Choice,
+    #    verbose_name='機種',
+    #    choices=sample_2_choice,
+    #    max_length=20,  # 選択肢の最大長を指定します
+    #    blank=True,
+    #    null=True,
+    #)
+
+    # サンプル項目3 症状ジャンル
+    sample_3 = models.CharField(
+        verbose_name='症状ジャンル',
+        max_length=200,  # 選択肢の最大長を指定します
         blank=True,
         null=True,
     )
 
-    # サンプル項目2 メモ
-    sample_2 = models.TextField(
-        verbose_name='サンプル項目2 メモ',
+    # サンプル項目4 症状詳細
+    sample_4 = models.CharField(
+        verbose_name='症状詳細',
+        max_length=200,  # 選択肢の最大長を指定します
+        blank=True,
+        null=True,
+    )
+   # サンプル項目4_1 添付ファイル(テスト)
+    sample_4_1 = models.FileField(
+        upload_to='uploads/%Y/%m/%d/',
+        verbose_name='添付ファイル',
         blank=True,
         null=True,
     )
 
-    # サンプル項目3 整数
-    sample_3 = models.IntegerField(
-        verbose_name='サンプル項目3 整数',
+   # サンプル項目4_2 症状画像
+    sample_4_2 = models.ImageField(
+        verbose_name='症状画像',
         blank=True,
         null=True,
     )
 
-    # サンプル項目4 浮動小数点
-    sample_4 = models.FloatField(
-        verbose_name='サンプル項目4 浮動小数点',
+    # サンプル項目5 エラーコード
+    sample_5 = models.CharField(
+        verbose_name='エラーコード',
+        max_length=100,  # 選択肢の最大長を指定します
         blank=True,
         null=True,
     )
 
-    # サンプル項目5 固定小数点
-    sample_5 = models.DecimalField(
-        verbose_name='サンプル項目5 固定小数点',
-        max_digits=5,
-        decimal_places=2,
+    # サンプル項目6 階層を上る
+    sample_6 = models.CharField(
+        verbose_name='階層を上る',
+        max_length=100,  # 選択肢の最大長を指定します
         blank=True,
         null=True,
     )
 
-    # サンプル項目6 ブール値
-    sample_6 = models.BooleanField(
-        verbose_name='サンプル項目6 ブール値',
+    # サンプル項目7 選択肢1
+    sample_7 = models.CharField(
+        verbose_name='選択肢１',
+        max_length=100,  # 選択肢の最大長を指定します
+        blank=True,
+        null=True,
     )
-
-    # サンプル項目7 日付
-    sample_7 = models.DateField(
-        verbose_name='サンプル項目7 日付',
+    # サンプル項目7_1 選択肢1URL
+    sample_7_1 = models.URLField(
+        verbose_name='選択肢１URL',
+        max_length=100,  # 選択肢の最大長を指定します
         blank=True,
         null=True,
     )
 
-    # サンプル項目8 日時
-    sample_8 = models.DateTimeField(
-        verbose_name='サンプル項目8 日時',
+    # サンプル項目8 選択肢2
+    sample_8 = models.CharField(
+        verbose_name='選択肢２',
+        max_length=100,  # 選択肢の最大長を指定します
+        blank=True,
+        null=True,
+    )
+    # サンプル項目8_1 選択肢2URL
+    sample_8_1 = models.URLField(
+        verbose_name='選択肢2URL',
+        max_length=100,  # 選択肢の最大長を指定します
         blank=True,
         null=True,
     )
 
-    # サンプル項目9 選択肢（固定）
-    sample_9_choice = (
-        (1, '選択１'),
-        (2, '選択２'),
-        (3, '選択３'),
+    # サンプル項目9 選択肢3
+    sample_9 = models.CharField(
+        verbose_name='選択肢３',
+        max_length=100,  # 選択肢の最大長を指定します
+        blank=True,
+        null=True,
     )
-
-    sample_9 = models.IntegerField(
-        verbose_name='サンプル項目9_選択肢（固定）',
-        choices=sample_9_choice,
+        # サンプル項目9_1 選択肢3URL
+    sample_9_1 = models.URLField(
+        verbose_name='選択肢3URL',
+        max_length=100,  # 選択肢の最大長を指定します
         blank=True,
         null=True,
     )
 
-    # サンプル項目9 選択肢（マスタ連動）
+        # サンプル項目11 タグ欄
+    sample_11 = models.CharField(
+        verbose_name='タグ欄',
+        max_length=100,  # 選択肢の最大長を指定します
+        blank=True,
+        null=True,
+    )
+
+    # サンプル項目10 選択肢（マスタ連動）
     sample_10 = models.ForeignKey(
         User,
         verbose_name='サンプル項目10_選択肢（マスタ連動）',
@@ -134,14 +206,13 @@ class Item(models.Model):
     )
 
     def __str__(self):
-        """
-        リストボックスや管理画面での表示
-        """
-        return self.sample_1
-
-    class Meta:
+        sample_2_names = [choice.name for choice in self.sample_2.all()]
+        return f'{self.sample_1} - {", ".join(sample_2_names)}'
         """
         管理画面でのタイトル表示
         """
+    class Meta:
         verbose_name = 'サンプル'
         verbose_name_plural = 'サンプル'
+
+
